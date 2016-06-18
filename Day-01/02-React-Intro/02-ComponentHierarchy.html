@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>React - Hello World</title>
+	<script src="react.js"></script>
+	<script src="react-dom.js"></script>
+	<script src="browser.min.js"></script>
+	<script type="text/babel">
+		var AppHeader = React.createClass({
+			render : function(){
+				return (
+					<h1>My App</h1>
+				)
+			}
+		});
+		var AppContent = React.createClass({
+			render : function(){
+				return (
+					<div>
+					<h3>App Content</h3>
+					<AppProducts></AppProducts>
+					<AppCustomers></AppCustomers>
+					</div>
+				)
+			}
+		});
+
+		var AppProducts = React.createClass({
+			render : function(){
+				return (
+					<div>
+						<h4>Products</h4>
+						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ut amet recusandae suscipit corrupti aperiam, asperiores est a. Rerum, consequuntur quae optio. Sed qui, consectetur perspiciatis ducimus explicabo, vero doloribus quod!</p>
+					</div>
+				)
+			}
+		})
+		var AppCustomers = React.createClass({
+			render : function(){
+				return (
+					<div>
+						<h4>Customers</h4>
+						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ut amet recusandae suscipit corrupti aperiam, asperiores est a. Rerum, consequuntur quae optio. Sed qui, consectetur perspiciatis ducimus explicabo, vero doloribus quod!</p>
+					</div>
+				)
+			}
+		});
+
+		var App = React.createClass({
+			render : function(){
+				return (
+					<div>
+					<AppHeader></AppHeader>
+					<AppContent></AppContent>
+					</div>
+				) 
+			}
+		})
+
+		ReactDOM.render(<App></App>, document.getElementById("content"));
+	</script>
+</head>
+<body id="content">
+	
+</body>
+</html>

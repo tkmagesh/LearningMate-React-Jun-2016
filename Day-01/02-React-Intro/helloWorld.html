@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>React - Hello World</title>
+	<style>
+		.highlight{
+			color : red;
+		}
+
+	</style>
+	<script src="react.js"></script>
+	<script src="react-dom.js"></script>
+	<script src="browser.min.js"></script>
+	<script src="jquery-1.12.4.js"></script>
+	<script type="text/babel">
+		var HelloWorld = React.createClass({
+			onButtonClick : function(){
+				console.log("button is clicked");
+				var name = this.refs.txtName.value;
+				console.log(name);
+			},
+			render : function(){
+				
+				return (
+					<div>
+					<h1 className="highlight">{this.props.msg}</h1>
+					<input type="text" ref="txtName"/>
+					<input type="button" value="Click Me" onClick={this.onButtonClick}/>
+					</div>
+				)
+			}
+		});
+		
+		$(function(){
+			$("#btnRenderHTML").click(function(){
+				$("#htmlContent").html('<h1>Hello World</h1>')
+			});
+			var counter = 0;
+			$("#btnRenderReact").click(function(){
+				++counter;
+				var message = 'something - ' + counter.toString();
+				ReactDOM.render(<HelloWorld msg={message}/>, document.getElementById("reactContent"));
+
+			})
+		})
+
+	</script>
+	<script type='text/babel'>
+		
+	</script>
+</head>
+<body >
+	<input type="button" value="Render HTML" id="btnRenderHTML">
+	<input type="button" value="Render React" id="btnRenderReact">
+	<div id="htmlContent"></div>
+	<div id="reactContent"></div>
+</body>
+</html>
