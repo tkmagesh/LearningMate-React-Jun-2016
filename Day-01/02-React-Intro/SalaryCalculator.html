@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Salary Calculator</title>
+	<style>
+		.field{
+			margin-bottom: 10px;
+		}
+		label{
+			display: block;
+		}
+		#divResult{
+			font-size: 18pt;
+			color : red;
+		}
+
+	</style>
+	
+	
+	<script src="react.js"></script>
+	<script src="react-dom.js"></script>
+	<script src="browser.min.js"></script>
+	
+	<script src="jquery-1.12.4.js"></script>
+
+	
+	<script type="text/babel">
+		String.prototype.toInt = function(){
+			return parseInt(this,10);
+		};
+
+		//Core Logic
+		function SalaryCalculator(){
+			var _data = {
+				basic : 0,
+				hra : 0,
+				da : 0,
+				tax : 0,
+				salary : 0
+			};
+
+			this.get = function(attrName){
+				return _data[attrName];
+			};
+			this.set = function(attrName, value){
+				if (_data[attrName] === value) return;
+				_data[attrName] = value;
+				//trigger change notification for 'attrName'
+				triggerChange(attrName);
+				triggerChange('all');
+			};
+			function triggerChange(attrName){
+				var eventHandlerFns = _eventHandlers[attrName] || [];
+				for(var i=0; i<eventHandlerFns.length; i++){
+					var eventHandlerFn = eventHandlerFns[i];
+					if (typeof eventHandlerFn === 'function')
+						eventHandlerFn();
+				}
+			}
+			var _eventHandlers = {
+				
+			};
+			this.onChange = function(attrName, eventHandlerFn){
+				_eventHandlers[attrName] = _eventHandlers[attrName] || [];
+				_eventHandlers[attrName].push( eventHandlerFn );
+			};
+			this.toJSON = function(){
+				return _data;
+			}
+		}
+		SalaryCalculator.prototype.calculate = function(){
+			var gross = this.get('basic') + this.get('hra') + this.get('da');
+			var net = gross * ((100-this.get('tax'))/100);
+			this.set('salary', net);
+			
+		}
+		var SalaryCalculatorView = React.createClass({
+			//React to user actions
+			onBasicChange : function(){
+				this.props.calculator.set('basic', this.refs.txtBasic.value.toInt());
+			},
+			onHraChange : function(){
+				this.props.calculator.set('hra', this.refs.txtHra.value.toInt());
+			},
+			onDaChange : function(){
+				this.props.calculator.set('da', this.refs.txtDa.value.toInt());
+			},
+			onTaxChange : function(){
+				this.props.calculator.set('tax', this.refs.rangeTax.value.toInt());
+			},
+			onCalculateClick : function(){
+				this.props.calculator.calculate();
+			},
+			//React to model changes
+			render : function(){
+				return (
+					<div className="content" >
+					<div className="field">
+						<label>Basic :</label>
+						<input onChange={this.onBasicChange} type="text" ref="txtBasic" defaultValue={this.props.data.basic} />
+					</div>
+					<div className="field">
+						<label>HRA :</label>
+						<input onChange={this.onHraChange} type="text" ref="txtHra" defaultValue={this.props.data.hra} />
+					</div>
+					<div className="field">
+						<label>DA :</label>
+						<input onChange={this.onDaChange} type="text" ref="txtDa" defaultValue={this.props.data.da} />
+					</div>
+					<div className="field">
+						<label>Tax :</label>
+						<input onChange={this.onTaxChange} type="range" ref="rangeTax" min="0" max="30" defaultValue={this.props.data.tax} />
+						<span id="spanTax">{this.props.data.tax}</span>
+					</div>
+					<div className="field">
+						<input type="button" value="Calculate" onClick={this.onCalculateClick} />
+					</div>
+					<div className="field">
+						<div id="divResult">{this.props.data.salary}</div>
+					</div>
+				</div>
+				)
+			}
+		});
+
+		window.calculator = new SalaryCalculator();
+		calculator.set('basic', 20000);
+		calculator.set('hra', 10000);
+		calculator.set('da',5000);
+		calculator.set('tax',10);
+
+		function reRender(){
+			ReactDOM.render(<SalaryCalculatorView data={calculator.toJSON()} calculator={calculator}></SalaryCalculatorView>, document.getElementById("calculatorContent"));
+		}
+		reRender();
+		calculator.onChange('all', reRender);
+
+	</script>
+</head>
+<body>
+	<h1>Salary Calculator</h1>
+	<hr>
+	<div id="calculatorContent"></div>
+	
+</body>
+</html>
