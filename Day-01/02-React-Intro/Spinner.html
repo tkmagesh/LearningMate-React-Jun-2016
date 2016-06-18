@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Salary Calculator</title>
+	<style>
+		.field{
+			margin-bottom: 10px;
+		}
+		label{
+			display: block;
+		}
+		#divResult{
+			font-size: 18pt;
+			color : red;
+		}
+
+	</style>
+	
+	
+	<script src="react.js"></script>
+	<script src="react-dom.js"></script>
+	<script src="browser.min.js"></script>
+	
+	<script src="jquery-1.12.4.js"></script>
+
+	
+	<script type="text/babel">
+		String.prototype.toInt = function(){
+			return parseInt(this,10);
+		};
+
+		//Core Logic
+		function Spinner(){
+			this.currentValue = 0;
+		}
+		Spinner.prototype.increment = function(){
+			++this.currentValue;
+			if (typeof this.onChange === 'function')
+				this.onChange();
+		};
+
+		Spinner.prototype.decrement = function(){
+			--this.currentValue;
+			if (typeof this.onChange === 'function')
+				this.onChange();
+		};
+		Spinner.prototype.reset = function(value){
+			this.currentValue = value;
+			if (typeof this.onChange === 'function')
+				this.onChange();
+		};
+
+		var SpinnerView = React.createClass({
+			//React to user actions
+			onIncrementClick : function(){
+				this.props.spinner.increment();
+			},
+			onDecrementClick : function(){
+				this.props.spinner.decrement()
+			},
+			onResetClick : function(){
+				this.props.spinner.reset(this.refs.txtResetValue.value.toInt())
+			},
+			//React to model changes
+			render : function(){
+				
+				return (
+					<div>
+						<input type="button" value="Increment" onClick={this.onIncrementClick}/>
+						<span>{this.props.spinner.currentValue}</span>
+						<input type="button" value="Decrement" onClick={this.onDecrementClick} />
+						<div>
+							<input type="text" ref="txtResetValue" />
+							<input type="button" value="Reset" onClick={this.onResetClick} />
+						</div>
+					</div>
+				)
+			}
+		});
+
+		window.spinner = new Spinner();
+		
+
+		function reRender(){
+			ReactDOM.render(<SpinnerView spinner={spinner}></SpinnerView>, document.getElementById("calculatorContent"));
+		}
+		reRender();
+		spinner.onChange = reRender;
+
+	</script>
+</head>
+<body>
+	<h1>Salary Calculator</h1>
+	<hr>
+	<div id="calculatorContent"></div>
+	
+</body>
+</html>
