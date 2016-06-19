@@ -36,12 +36,44 @@
 	<script src="react-dom.js"></script>
 	<script src="browser.min.js"></script>
 	<script type="text/babel">
-		var bugs = [
-			{id : 1, name : 'Object reference not set to an instance', isClosed : false},
-			{id : 2, name : 'Server communication failure', isClosed : true},
-			{id : 3, name : 'User request is not acknowledged', isClosed : false},
-		];
+		var bugsApp = (function(){
+			var bugs = [
+				{id : 1, name : 'Object reference not set to an instance', isClosed : false},
+				{id : 2, name : 'Server communication failure', isClosed : true},
+				{id : 3, name : 'User request is not acknowledged', isClosed : false},
+			];
 
+			function addNewBug(bugName){
+				var newId = bugs.reduce(function(result, bug){
+					return result > bug.id ? result : bug.id
+				},0) + 1;
+				var newBug = {
+					id : newId,
+					name : bugName,
+					isClosed : false
+				};
+				bugs.push(newBug);
+				console.log('bug list updated', bugs);
+				triggerUpdate();
+			}
+			var _onUpdateCallbacks = [];
+			function subscribeOnUpdate(fn){
+				_onUpdateCallbacks.push(fn);
+			}
+
+			function triggerUpdate(){
+				_onUpdateCallbacks.forEach(function(fn){
+					fn();
+				})
+			}
+
+			return {
+				list : bugs,
+				addNew : addNewBug,
+				onUpdate : subscribeOnUpdate
+			};
+		})();
+		
 		var BugTrackerApp = React.createClass({
 			render : function(){
 				return (
@@ -50,9 +82,9 @@
 						<h1>Bug Tracker</h1>
 						<hr />
 						<div id="contents">
-							<BugStats list={this.props.data}></BugStats>
-							<BugEdit></BugEdit>
-							<BugList list={this.props.data}></BugList>
+							<BugStats list={this.props.data.list}></BugStats>
+							<BugEdit onAddNew={this.props.data.addNew}></BugEdit>
+							<BugList list={this.props.data.list}></BugList>
 						</div>
 					</div>
 				);
@@ -76,12 +108,17 @@
 		});
 
 		var BugEdit = React.createClass({
+			addNew : function(){
+				var bugName = this.refs.txtBugName.value;
+				this.props.onAddNew(bugName);
+			},
 			render : function(){
+
 				return (
 					<section class="new">
 						<label htmlFor="">Bug :</label>
-						<input type="text" name="" id="" />
-						<input type="button" value="Add New" />
+						<input type="text" ref="txtBugName" />
+						<input type="button" value="Add New" onClick={this.addNew}/>
 					</section>
 				);
 			}
@@ -108,8 +145,12 @@
 				);
 			}
 		})
-		
-		ReactDOM.render(<BugTrackerApp data={bugs}/>, document.getElementById("bugApp"));
+		bugsApp.onUpdate(render);
+
+		function render(){
+			ReactDOM.render(<BugTrackerApp data={bugsApp}/>, document.getElementById("bugApp"));
+		}
+		render();
 	</script>
 </head>
 <body >
