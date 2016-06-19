@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Bug Tracker</title>
+	<style>
+		section{
+			margin-bottom: 10px;
+
+		}
+		.closed{
+			color : red;
+			text-decoration: line-through;
+			font-weight: bold;
+			font-style: italic;
+		}
+		ol{
+			list-style: none;
+			width: 400px;
+			-webkit-padding-start: 0px;
+		}
+		li{
+			margin-bottom: 5px;
+			border: 1px solid gray;
+			padding: 5px;
+			background-color: #e7e7e7;
+			border-radius: 4px;
+			margin-left : 0px;
+		}
+		li span{
+			cursor: pointer;
+		}
+
+	</style>
+</head>
+<body>
+	<h1>Bug Tracker</h1>
+	<hr>
+	<div class="contents">
+		<section class="stats">
+			<span class="closed">2</span>
+			<span>/</span>
+			<span>5</span>
+		</section>
+		<section class="new">
+			<label for="">Bug :</label>
+			<input type="text" name="" id="">
+			<input type="button" value="Add New">
+		</section>
+		<section class="list">
+			<ol>
+				<li><span class="closed">This is a closed bug</span></li>
+				<li><span>This is a open bug</span></li>
+			</ol>
+		</section>
+	</div>
+</body>
+</html>

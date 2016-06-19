@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Salary Calculator</title>
+	<style>
+		.field{
+			margin-bottom: 10px;
+		}
+		label{
+			display: block;
+		}
+		#divResult{
+			font-size: 18pt;
+			color : red;
+		}
+
+	</style>
+	
+	
+	<script src="react.js"></script>
+	<script src="react-dom.js"></script>
+	<script src="browser.min.js"></script>
+	
+	<script src="jquery-1.12.4.js"></script>
+
+	
+	<script type="text/babel">
+		String.prototype.toInt = function(){
+			return parseInt(this,10);
+		};
+
+		//Core Logic
+		
+
+		var SpinnerView = React.createClass({
+			getInitialState : function(){
+				return {
+					currentValue : 0
+				};
+			},
+			//React to user actions
+			onIncrementClick : function(){
+				this.setState({ currentValue : this.state.currentValue + 1});
+				
+			},
+			onDecrementClick : function(){
+				this.setState({ currentValue : this.state.currentValue - 1});
+				
+			},
+			onResetClick : function(){
+				this.setState({currentValue : this.refs.txtResetValue.value.toInt()});
+			},
+			//React to model changes
+			render : function(){
+				
+				return (
+					<div>
+						<input type="button" value="Increment" onClick={this.onIncrementClick}/>
+						<span>{this.state.currentValue}</span>
+						<input type="button" value="Decrement" onClick={this.onDecrementClick} />
+						<div>
+							<input type="text" ref="txtResetValue" />
+							<input type="button" value="Reset" onClick={this.onResetClick} />
+						</div>
+					</div>
+				)
+			}
+		});
+
+		ReactDOM.render(<SpinnerView></SpinnerView>, document.getElementById("spinnerContent"));
+		
+
+
+
+	</script>
+</head>
+<body>
+	<h1>Salary Calculator</h1>
+	<hr>
+	<div id="spinnerContent"></div>
+	
+</body>
+</html>
