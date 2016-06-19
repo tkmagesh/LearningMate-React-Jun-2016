@@ -44,18 +44,23 @@
 			];
 
 			function addNewBug(bugName){
-				var newId = bugs.reduce(function(result, bug){
-					return result > bug.id ? result : bug.id
-				},0) + 1;
+				var newId = bugs.reduce((result, bug) => 
+					result > bug.id ? result : bug.id
+				,0) + 1;
 				var newBug = {
 					id : newId,
 					name : bugName,
 					isClosed : false
 				};
 				bugs.push(newBug);
-				console.log('bug list updated', bugs);
 				triggerUpdate();
 			}
+
+			function toggleBug(bug){
+				bug.isClosed = !bug.isClosed;
+				triggerUpdate();
+			}
+
 			var _onUpdateCallbacks = [];
 			function subscribeOnUpdate(fn){
 				_onUpdateCallbacks.push(fn);
@@ -70,6 +75,7 @@
 			return {
 				list : bugs,
 				addNew : addNewBug,
+				toggle : toggleBug,
 				onUpdate : subscribeOnUpdate
 			};
 		})();
@@ -84,7 +90,7 @@
 						<div id="contents">
 							<BugStats list={this.props.data.list}></BugStats>
 							<BugEdit onAddNew={this.props.data.addNew}></BugEdit>
-							<BugList list={this.props.data.list}></BugList>
+							<BugList list={this.props.data.list} toggle={this.props.data.toggle}></BugList>
 						</div>
 					</div>
 				);
@@ -126,15 +132,12 @@
 
 		var BugList = React.createClass({
 			render : function(){
-				
-				var BugItems = this.props.list.map(function(bug) {
-					
-					return (
-						<li key={bug.id}>
-							{bug.isClosed ? <span className="closed">{bug.name}</span> : <span>{bug.name}</span>}
-						</li>
-					)
-				});
+				var self = this;
+				var BugItems = this.props.list.map(
+					bug => (
+						<BugItem key={bug.id} bug={bug} toggle={self.props.toggle}>
+						</BugItem>
+					));
 				
 				return (
 					<section className="list">
@@ -143,6 +146,21 @@
 						</ol>
 					</section>
 				);
+			}
+		})
+
+		var BugItem = React.createClass({
+			toggle : function(){
+				this.props.toggle(this.props.bug)
+			},
+			render : function(){
+				
+					return (
+						<li  onClick={this.toggle}>
+							{ this.props.bug.isClosed ? <span className="closed">{this.props.bug.name}</span> : <span>{this.props.bug.name}</span>}
+						</li>
+					)
+				
 			}
 		})
 		bugsApp.onUpdate(render);
